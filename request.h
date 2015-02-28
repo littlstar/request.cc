@@ -239,6 +239,10 @@ private:
   bool
   HasAuth();
 
+  /**
+   * Build query string.
+   */
+
   std::string
   QueryString();
 
