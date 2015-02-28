@@ -19,6 +19,48 @@ TestUserAgent(){
 }
 
 void
+TestQuery(){
+  std::string u;
+  std::string expected;
+  Request *req = NULL;
+
+  req = new Request;
+  req->Get("http://google.com/");
+  req->Query("foo");
+  req->Query("all", "the ducks are swimming in the water");
+  req->Query("bar", "baz");
+  u = req->Url();
+
+  expected = "http://google.com/"
+             "?all=the%20ducks%20are%20swimming%20in%20the%20water"
+             "&bar=baz"
+             "&foo";
+
+  assert(u == expected);
+  delete req;
+}
+
+void
+TestUrl(){
+  Request *req = NULL;
+
+  req = new Request;
+  req->Get("http://foo.com/");
+  assert("http://foo.com/" == req->Url());
+  delete req;
+
+  // with querystring
+  req = new Request;
+  req->Get("http://foo.com/");
+  req->Query("bax", "bux");
+  assert("http://foo.com/?bax=bux" == req->Url());
+  delete req;
+
+  req = new Request;
+  delete req;
+}
+
+void
 TestRedirects(){
   Request *req = new Request;
   Response *res = NULL;
@@ -145,6 +187,8 @@ TestGet(){
 int
 main(){
   TestUserAgent();
+  TestQuery();
+  TestUrl();
   TestRedirects();
   TestHeaders();
   TestAccept();
