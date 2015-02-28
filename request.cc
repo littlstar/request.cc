@@ -260,7 +260,7 @@ Request::HeaderCallback(
 
 size_t
 Request::ReadCallback(void *data, size_t size, size_t nmemb, void *userdata) {
-  RequestPutData* put_data = reinterpret_cast<RequestPutData *>(userdata);
+  RequestPutData *put_data = reinterpret_cast<RequestPutData *>(userdata);
   size_t total = size * nmemb;
   size_t copy = put_data->length < total
     ? put_data->length
