@@ -3,10 +3,11 @@
  * Copyright (c) 2015 -  Little Star Media, Inc
  */
 
-#include <stdio.h>
+#include <stdlib.h>
 #include <curl/curl.h>
 #include <string.h> // memcpy
 #include "trim/trim.h"
+#include "uri/uri.h"
 #include "request.h"
 
 /**
@@ -36,6 +37,7 @@ Request::Request(){
 
 Request::~Request(){
   this->headers.clear();
+  this->query.clear();
 }
 
 void
@@ -108,7 +110,47 @@ Request::Headers(){
 
 void
 Request::Query(const std::string &val){
-  // TODO
+  this->query[val] = "";
+}
+
+void
+Request::Query(const std::string &field, const std::string &val){
+  this->query[field] = val;
+}
+
+std::string
+Request::QueryString(){
+  std::map<std::string, std::string>::iterator it;
+  std::string qs;
+  int i = 0;
+
+  if (this->query.empty()) return qs;
+
+  for (it = this->query.begin(); it != this->query.end(); it++, i++) {
+    if (0 == i) {
+      qs.append("?");
+    } else {
+      qs.append("&");
+    }
+
+    std::string field = it->first;
+    std::string value = it->second;
+
+    if (value.length()) {
+      char *encoded = uri_encode(value.c_str());
+      qs.append(field + "=" + encoded);
+      free(encoded);
+    } else {
+      qs.append(field);
+    }
+  }
+
+  return qs;
+}
+
+std::string
+Request::Url(){
+  return this->url + this->QueryString();
 }
 
 Response *
@@ -152,7 +194,7 @@ Request::End(){
   // TODO: check return code
 
   // set url
-  option(CURLOPT_URL, this->url.c_str());
+  option(CURLOPT_URL, this->Url().c_str());
 
   // set callbacks & method
   switch (this->method) {

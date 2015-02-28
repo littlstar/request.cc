@@ -162,6 +162,20 @@ public:
   Query(const std::string &val);
 
   /**
+   * Add query string `field=val`.
+   */
+
+  void
+  Query(const std::string &field, const std::string &val);
+
+  /**
+   * Get request `url`.
+   */
+
+  std::string
+  Url();
+
+  /**
    * Initiate request.
    */
 
@@ -169,9 +183,6 @@ public:
   End();
 
 private:
-
-  bool
-  HasAuth();
 
   /**
    * Should we follow 30x redirects?
@@ -220,6 +231,26 @@ private:
    */
 
   HeaderMap headers;
+
+  /**
+   * Query string map.
+   */
+
+  std::map<std::string, std::string> query;
+
+  /**
+   * Has auth been set?
+   */
+
+  bool
+  HasAuth();
+
+  /**
+   * Build query string.
+   */
+
+  std::string
+  QueryString();
 
   /**
    * Write data callback.
