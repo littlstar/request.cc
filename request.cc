@@ -5,8 +5,19 @@
 
 #include <stdio.h>
 #include <curl/curl.h>
+#include <string.h> // memcpy
 #include "trim/trim.h"
 #include "request.h"
+
+/**
+ * PUT data type.
+ */
+
+typedef struct {
+  const char* data;
+  size_t length;
+} RequestPutData;
+
 
 Response::Response(){
   this->ok = 0;
@@ -17,6 +28,7 @@ Response::~Response(){
   this->data.clear();
   this->headers.clear();
 }
+
 
 Request::Request(){
   this->FollowRedirects(true);
@@ -83,8 +95,8 @@ Request::Auth(const std::string &user, const std::string &pass){
 }
 
 void
-Request::Send(void){
-  // TODO
+Request::Send(const std::string &data){
+  this->data = data;
 }
 
 HeaderMap
@@ -107,6 +119,8 @@ Request::End(){
   struct curl_slist *headers = NULL;
   long status = 0;
   HeaderMap::iterator it;
+
+  // TODO: if POST, assert(content type)
 
   if (!(req = curl_easy_init())) return res;
 
@@ -140,7 +154,7 @@ Request::End(){
   // set url
   option(CURLOPT_URL, this->url.c_str());
 
-  // set callbacks
+  // set callbacks & method
   switch (this->method) {
     case REQUEST_GET:
       option(CURLOPT_WRITEFUNCTION, this->WriteCallback);
@@ -149,10 +163,39 @@ Request::End(){
       option(CURLOPT_HEADERDATA, res);
       break;
 
-    // TODO
-    case REQUEST_POST: break;
-    case REQUEST_PUT: break;
-    case REQUEST_DELETE: break;
+    case REQUEST_POST:
+      option(CURLOPT_POST, 1);
+      option(CURLOPT_POSTFIELDS, this->data.c_str());
+      option(CURLOPT_POSTFIELDSIZE, this->data.size());
+      option(CURLOPT_WRITEFUNCTION, this->WriteCallback);
+      option(CURLOPT_WRITEDATA, res);
+      option(CURLOPT_HEADERFUNCTION, this->HeaderCallback);
+      option(CURLOPT_HEADERDATA, res);
+      break;
+
+    case REQUEST_PUT:
+      RequestPutData put_data;
+      put_data.data = this->data.c_str();
+      put_data.length = this->data.size();
+
+      option(CURLOPT_PUT, 1);
+      option(CURLOPT_UPLOAD, 1);
+      option(CURLOPT_READFUNCTION, this->ReadCallback);
+      option(CURLOPT_READDATA, &put_data);
+      option(CURLOPT_WRITEFUNCTION, this->WriteCallback);
+      option(CURLOPT_WRITEDATA, res);
+      option(CURLOPT_HEADERFUNCTION, this->HeaderCallback);
+      option(CURLOPT_HEADERDATA, res);
+      option(CURLOPT_INFILESIZE, static_cast<long>(put_data.length));
+      break;
+
+    case REQUEST_DELETE:
+      option(CURLOPT_WRITEFUNCTION, this->WriteCallback);
+      option(CURLOPT_WRITEDATA, res);
+      option(CURLOPT_HEADERFUNCTION, this->HeaderCallback);
+      option(CURLOPT_HEADERDATA, res);
+      option(CURLOPT_CUSTOMREQUEST, "DELETE");
+      break;
   }
 
   #undef option
@@ -213,4 +256,18 @@ Request::HeaderCallback(
   }
 
   return size * nmemb;
+}
+
+size_t
+Request::ReadCallback(void *data, size_t size, size_t nmemb, void *userdata) {
+  RequestPutData* put_data = reinterpret_cast<RequestPutData *>(userdata);
+  size_t total = size * nmemb;
+  size_t copy = put_data->length < total
+    ? put_data->length
+    : total;
+  memcpy(data, put_data->data, copy);
+  // decrement length, then add pointer data
+  put_data->length -= copy;
+  put_data->data += copy;
+  return copy;
 }
