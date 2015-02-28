@@ -142,6 +142,57 @@ TestGet(){
   delete res;
 }
 
+void
+TestPost(){
+  Request *req = NULL;
+  Response *res = NULL;
+
+  req = new Request;
+  req->Post("http://httpbin.org/post");
+  req->Send("data goes here");
+  req->Type("application/json");
+  res = req->End();
+
+  assert(200 == res->status);
+  assert(std::string::npos != res->data.find("\"data\": \"data goes here\""));
+
+  delete req;
+  delete res;
+}
+
+void
+TestPut(){
+  Request *req = NULL;
+  Response *res = NULL;
+
+  req = new Request;
+  req->Put("http://httpbin.org/put");
+  req->Send("data goes here");
+  res = req->End();
+
+  assert(200 == res->status);
+  assert(std::string::npos != res->data.find("\"data\": \"data goes here\""));
+
+  delete req;
+  delete res;
+}
+
+void
+TestDelete(){
+  Request *req = NULL;
+  Response *res = NULL;
+
+  req = new Request;
+  req->Delete("http://httpbin.org/delete");
+  res = req->End();
+
+  assert(res->ok);
+  assert(200 == res->status);
+
+  delete req;
+  delete res;
+}
+
 int
 main(){
   TestUserAgent();
@@ -151,5 +202,8 @@ main(){
   TestType();
   TestAuth();
   TestGet();
+  TestPost();
+  TestPut();
+  TestDelete();
   return 0;
 }

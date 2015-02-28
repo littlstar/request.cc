@@ -145,7 +145,7 @@ public:
    */
 
   void
-  Send(void);
+  Send(const std::string &data);
 
   /**
    * Get all headers.
@@ -204,6 +204,12 @@ private:
   std::string auth_password;
 
   /**
+   * POST/PUT data.
+   */
+
+  std::string data;
+
+  /**
    * Request method.
    */
 
@@ -233,6 +239,19 @@ private:
 
   static size_t
   HeaderCallback(
+      void *data
+    , size_t size
+    , size_t nmemb
+    , void *userdata
+  );
+
+
+  /**
+   * Read callback.
+   */
+
+  static size_t
+  ReadCallback(
       void *data
     , size_t size
     , size_t nmemb
