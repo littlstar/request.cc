@@ -5,6 +5,7 @@
 
 #include <stdlib.h>
 #include <curl/curl.h>
+#include <algorithm> // std::transform
 #include <string.h> // memcpy
 #include "trim/trim.h"
 #include "uri/uri.h"
@@ -18,6 +19,18 @@ typedef struct {
   const char* data;
   size_t length;
 } RequestPutData;
+
+/**
+ * Convert `s` to lower case.
+ *
+ * TODO: littlstar/case.cc ??
+ */
+
+static inline std::string
+LowerCase(std::string s){
+  std::transform(s.begin(), s.end(), s.begin(), ::tolower);
+  return s;
+}
 
 
 Response::Response(){
@@ -76,8 +89,7 @@ Request::FollowRedirects(bool val){
 
 void
 Request::Set(const std::string &field, const std::string &val){
-  // TODO: lowercase fieldname
-  this->headers[field] = val;
+  this->headers[LowerCase(field)] = val;
 }
 
 void
@@ -292,9 +304,9 @@ Request::HeaderCallback(
   size_t seperator = header.find_first_of(":");
 
   if (std::string::npos != seperator) {
-    std::string key = header.substr(0, seperator);
+    std::string field = header.substr(0, seperator);
     std::string value = header.substr(seperator + 1);
-    res->headers[Trim(key)] = Trim(value);
+    res->headers[LowerCase(Trim(field))] = Trim(value);
   }
 
   return size * nmemb;

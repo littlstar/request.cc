@@ -92,11 +92,17 @@ TestHeaders(){
   req->Accept("application/json");
   req->Type("bananas");
 
+  // ensure we don't clobber headers
+  req->Set("BLAH", "one");
+  req->Set("bLAh", "two");
+  req->Set("BlaH", "three");
+
   headers = req->Headers();
 
   assert("bar" == headers["foo"]);
-  assert("bananas" == headers["Content-Type"]);
-  assert("application/json" == headers["Accept"]);
+  assert("bananas" == headers["content-type"]);
+  assert("application/json" == headers["accept"]);
+  assert("three" == headers["blah"]);
 
   req->Get("http://httpbin.org/get");
   res = req->End();
@@ -160,7 +166,7 @@ TestGet(){
   res = req->End();
   assert(200 == res->status);
   assert(1 == res->ok);
-  assert("text/html; charset=utf-8" == res->headers["Content-Type"]);
+  assert("text/html; charset=utf-8" == res->headers["content-type"]);
   assert(std::string::npos != res->data.find("<title>GitHub"));
   delete req;
   delete res;
