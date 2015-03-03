@@ -10,6 +10,9 @@ OBJS = $(SRC_CC:.cc=.o) $(SRC_C:.c=.o)
 default: test
 	./$<
 
+example: example.o $(OBJS)
+	$(CXX) -o $@ $^ $(LDFLAGS)
+
 test: test.o $(OBJS)
 	$(CXX) -o $@ $^ $(LDFLAGS)
 
@@ -17,7 +20,7 @@ valgrind: test
 	valgrind $(VALGRIND_OPTS) ./$<
 
 clean:
-	rm -f test.o test
+	rm -f test.o test example.o example
 	rm -f $(OBJS)
 
 .PHONY: default valgrind clean

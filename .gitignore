@@ -2,3 +2,5 @@ request.o
 test.o
 deps/
 test
+example
+example.o
