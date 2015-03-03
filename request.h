@@ -1,4 +1,9 @@
 
+//
+// Copyright (c) 2015 Little Star Media, Inc.
+// MIT licensed
+//
+
 #ifndef REQUEST_H
 #define REQUEST_H 1
 

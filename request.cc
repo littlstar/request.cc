@@ -1,7 +1,8 @@
 
-/**
- * Copyright (c) 2015 -  Little Star Media, Inc
- */
+//
+// Copyright (c) 2015 Little Star Media, Inc.
+// MIT licensed
+//
 
 #include <stdlib.h>
 #include <curl/curl.h>
