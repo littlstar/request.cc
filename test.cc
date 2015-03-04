@@ -2,7 +2,7 @@
 #include <assert.h>
 #include "request.h"
 
-#include <stdio.h>
+using namespace littlstar;
 
 void
 TestUserAgent(){

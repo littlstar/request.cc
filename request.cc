@@ -12,6 +12,8 @@
 #include "uri/uri.h"
 #include "request.h"
 
+namespace littlstar {
+
 /**
  * PUT data type.
  */
@@ -326,3 +328,5 @@ Request::ReadCallback(void *data, size_t size, size_t nmemb, void *userdata) {
   put_data->data += copy;
   return copy;
 }
+
+} // littlstar

@@ -5,8 +5,8 @@
 
 int
 main(){
-  Request *req = new Request;
-  Response *res = NULL;
+  littlstar::Request *req = new littlstar::Request;
+  littlstar::Response *res = NULL;
 
   req->Get("https://littlstar.com/api/v1/videos");
   req->Query("foo", "bar");

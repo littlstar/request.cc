@@ -4,11 +4,13 @@
 // MIT licensed
 //
 
-#ifndef REQUEST_H
-#define REQUEST_H 1
+#ifndef LS_REQUEST_H
+#define LS_REQUEST_H 1
 
 #include <string>
 #include <map>
+
+namespace littlstar {
 
 /**
  * Header map.
@@ -296,4 +298,6 @@ private:
 
 }; // Request
 
-#endif // REQUEST_H
+} // littlstar
+
+#endif // LS_REQUEST_H
