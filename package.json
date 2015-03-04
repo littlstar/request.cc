@@ -9,7 +9,7 @@
     "request.cc"
   ],
   "dependencies": {
-    "littlstar/trim.cc": "0.1.1",
+    "littlstar/trim.cc": "0.1.2",
     "littlstar/uri.c": "0.0.6"
   }
 }
