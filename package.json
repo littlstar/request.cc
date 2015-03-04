@@ -1,6 +1,6 @@
 {
   "name": "request",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "repo": "littlstar/request.cc",
   "description": "Simple interface for making HTTP requests",
   "keywords": ["http", "request", "https"],
